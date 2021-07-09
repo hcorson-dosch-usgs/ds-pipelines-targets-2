@@ -1,19 +1,20 @@
 
-combine_nwis_data <- function(...) {
+combine_nwis_data <- function(out_file, ...) {
   downloaded_files = list(...)
 
   data_out <- purrr::map_df(downloaded_files, function(downloaded_file) {
     read_csv(downloaded_file, col_types = 'ccTdcc')
   })
 
-  return(data_out)
+  write_csv(data_out, out_file)
+  return(out_file)
 }
 
-nwis_site_info <- function(fileout, site_data){
+nwis_site_info <- function(site_data_file){
+  site_data <- read_csv(site_data_file)
   site_no <- unique(site_data$site_no)
   site_info <- dataRetrieval::readNWISsite(site_no)
-  write_csv(site_info, fileout)
-  return(fileout)
+  return(site_info)
 }
 
 download_nwis_site_data <- function(site_num, out_file, parameterCd = '00010', startDate="2014-05-01", endDate="2015-05-01"){
