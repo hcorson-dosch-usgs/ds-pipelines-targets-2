@@ -78,32 +78,36 @@ p1_targets_list <- list(
     format = 'file'
   ),
   tar_target(
-    site_data,
-    combine_nwis_data(site_data_01427207_csv,
+    site_data_csv,
+    combine_nwis_data(out_file = '1_fetch/out/site_data.csv',
+                      site_data_01427207_csv,
                       site_data_01432160_csv,
                       site_data_01435000_csv,
                       site_data_01436690_csv,
-                      site_data_01466500_csv)
+                      site_data_01466500_csv),
+    format = "file"
   ),
   tar_target(
-    site_info_csv,
-    nwis_site_info(fileout = "1_fetch/out/site_info.csv", site_data),
-    format = "file"
+    site_info,
+    nwis_site_info(site_data_file = site_data_csv)
   )
 )
 
 p2_targets_list <- list(
   tar_target(
-    site_data_munged,
-    munge_nwis_data(nwis_data = site_data, 
-                    site_info_file = site_info_csv)
+    site_data_munged_csv,
+    munge_nwis_data(site_data_file = site_data_csv, 
+                    site_info = site_info,
+                    out_file = '2_process/out/site_data_munged.csv'),
+    format = "file"
   )
 )
 
 p3_targets_list <- list(
   tar_target(
     figure_1_png,
-    plot_nwis_timeseries(fileout = "3_visualize/out/figure_1.png", site_data_munged),
+    plot_nwis_timeseries(fileout = "3_visualize/out/figure_1.png", 
+                         site_data_file = site_data_munged_csv),
     format = "file"
   )
 )
